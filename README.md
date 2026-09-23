@@ -120,25 +120,6 @@ The certificate and private key are loaded into a Kubernetes TLS Secret and cons
 
 cert-manager / Let's Encrypt is intentionally not part of the POC because the test environment is not reachable from the public Internet for HTTP-01 validation. Certificate renewal is therefore handled outside the cluster for this POC.
 
-## Repository structure
-
-```text
-.
-├── app/
-│   ├── app-test.yaml
-│   └── app-service.yaml
-├── postgres/
-│   └── cluster.yaml
-├── certs/
-│   └── dev.app.ru/
-├── scripts/
-│   ├── setup-k3d.sh
-│   ├── deploy.sh
-│   └── network-test.sh
-├── ingress.yaml
-└── README.md
-```
-
 ## Requirements
 
 - Docker / Docker Desktop
