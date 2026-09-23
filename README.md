@@ -112,14 +112,6 @@ PostgreSQL is managed by [CloudNativePG](https://cloudnative-pg.io/).
 
 The database is deployed using a raw CNPG manifest; Helm is not required for this POC.
 
-### TLS
-
-The POC uses the existing certificate for `test.dev.app.ru`.
-
-The certificate and private key are loaded into a Kubernetes TLS Secret and consumed by the Traefik Ingress.
-
-cert-manager / Let's Encrypt is intentionally not part of the POC because the test environment is not reachable from the public Internet for HTTP-01 validation. Certificate renewal is therefore handled outside the cluster for this POC.
-
 ## Requirements
 
 - Docker / Docker Desktop
@@ -134,32 +126,25 @@ app/branch/development:latest
 
 ## Installation
 
-Create the local k3d environment:
+Create the local k3d environment and deploy the infrastructure:
 
 ```bash
-./scripts/setup-k3d.sh
+./scripts/install.sh
 ```
 
-This creates the registry and the k3s cluster.
+The installation script:
 
-Deploy the workload:
-
-```bash
-./scripts/deploy.sh
-```
-
-The deployment script:
-
-1. creates the `app` namespace;
-2. creates the database credentials Secret;
-3. installs CloudNativePG;
-4. waits for the CNPG controller;
-5. creates the PostgreSQL cluster;
-6. waits for PostgreSQL to become healthy;
-7. deploys the application and Service;
-8. creates the TLS Secret;
-9. deploys the Traefik Ingress;
-10. waits for the application rollout.
+1. creates a local k3d registry;
+2. creates a K3s cluster with one server and two agents;
+3. taints the control-plane node to keep application workloads on workers;
+4. restricts K3s ServiceLB to the worker nodes;
+5. creates the `app` namespace;
+6. generates PostgreSQL credentials and stores them in a Kubernetes Secret;
+7. installs CloudNativePG;
+8. deploys the PostgreSQL cluster;
+9. deploys the application workload;
+10. deploys the Service and Traefik Ingress;
+11. waits for the PostgreSQL cluster and application rollout.
 
 ## Verification
 
