@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-test
+  namespace: app
+
+spec:
+  ingressClassName: traefik
+
+  tls:
+    - hosts:
+        - test.dev.app.ru
+      secretName: app-test-tls
+
+  rules:
+    - host: test.dev.app.ru
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app-test
+                port:
+                  number: 80

@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-test
+  namespace: app
+
+spec:
+  replicas: 2
+  
+  strategy:
+    type: Recreate
+
+  selector:
+    matchLabels:
+      app: app-test
+
+  template:
+    metadata:
+      labels:
+        app: app-test
+
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: app-test
+              topologyKey: kubernetes.io/hostname
+
+      containers:
+        - name: app-test
+          image: k3d-app-registry:5111/app/branch/development:latest
+          imagePullPolicy: Always
+
+          env:
+            - name: HOST
+              value: "test.dev.app.ru"
+
+            - name: APP_DB_HOST
+              value: "app-db-rw"
+
+            - name: APP_DB_NAME
+              value: "app_test-dev"
+
+            - name: APP_DB_USERNAME
+              value: "app_test-dev"
+
+            - name: APP_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-db-credentials
+                  key: password

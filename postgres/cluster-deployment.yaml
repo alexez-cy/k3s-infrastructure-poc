@@ -1,0 +1,23 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: app-db
+  namespace: app
+
+spec:
+  instances: 2
+
+  affinity:
+    enablePodAntiAffinity: true
+    podAntiAffinityType: required
+    topologyKey: kubernetes.io/hostname
+
+  bootstrap:
+    initdb:
+      database: app_test-dev
+      owner: app_test-dev
+      secret:
+        name: app-db-credentials
+
+  storage:
+    size: 5Gi
